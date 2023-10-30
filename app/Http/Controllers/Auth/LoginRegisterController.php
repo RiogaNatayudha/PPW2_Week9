@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Models\User;
+use App\Mail\SendEmail;
+use Illuminate\Support\Facades\Mail;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -42,9 +44,16 @@ class LoginRegisterController extends Controller
             'password' => Hash::make($request->password)
         ]);
 
+        $userData = [
+            'name' => $request->name,
+            'email' => $request->email,
+            // Tambahkan data pengguna lainnya jika perlu
+        ];
+
         $credentials = $request->only('email', 'password');
         Auth::attempt(($credentials));
         $request->session()->regenerate();
+        Mail::to($request->email)->send(new SendEmail($userData));
         return redirect()->route('dashboard')->withSuccess('You have successfully registered and logged in!');
     }
 
