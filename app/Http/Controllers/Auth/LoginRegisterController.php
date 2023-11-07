@@ -6,9 +6,12 @@ use App\Models\User;
 use App\Mail\SendEmail;
 use Illuminate\Support\Facades\Mail;
 use App\Http\Controllers\Controller;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Storage;
 
 class LoginRegisterController extends Controller
 {
@@ -32,16 +35,30 @@ class LoginRegisterController extends Controller
     // @return \Illuminate\Http\Response
     public function store(Request $request) 
     {
+
         $request->validate([
         'name' => 'required|string|max:250',
         'email' => 'required|email|max:250|unique:users',
-        'password' => 'required|min:8|confirmed'
+        'password' => 'required|min:8|confirmed',
+        'photo' => 'image|nullable|max:10000000'
         ]);   
+
+        $path=null;
+        if ($request-> hasFile('picture')) {
+            $filenameWithExt = $request->file('photo')->getClientOriginalName();
+            $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
+            $extension = $request->file('photo')->getClientOriginalExtension();
+            $filenameSimpan = $filename . '_' . time() . '.' . $extension;
+            $path = $request->file('photo')->storeAs('photos', $filenameSimpan);
+        } else {
+            //gada
+        }
 
         User::create([
             'name' => $request->name,
             'email' => $request->email,
-            'password' => Hash::make($request->password)
+            'password' => Hash::make($request->password),
+            'photo' => $path
         ]);
 
         $userData = [
@@ -78,6 +95,7 @@ class LoginRegisterController extends Controller
         return back()->withErrors([
             'email' => 'Your provided credentials do not match in our records.',
         ])->onlyInput('email');
+        
         }   
 
     //Display a dashboard to authenticated users.
@@ -99,4 +117,4 @@ class LoginRegisterController extends Controller
         $request->session()->regenerateToken();
         return redirect()->route('login')->withSuccess('You have logged out successfully!');
     }
-}
+};
