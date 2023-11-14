@@ -35,7 +35,7 @@ Route::controller(LoginRegisterController::class)->group(function() {
     Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
     Route::get('/users/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
     Route::patch('/users/{user}', [UserController::class, 'update'])->name('users.update');
-    Route::get('/users/{user}/resize', [UserController::class, 'resizeForm'])->name('users.resize');
+    Route::get('/users/{user}/resize', [UserController::class, 'resizeForm'])->name('users.resizeForm');
     Route::post('/users/{user}/resize', [UserController::class, 'resizeImage'])->name('resizeImage');
     Route::post('/logout', 'logout')->name('logout');
    });
