@@ -3,6 +3,8 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginRegisterController;
 use App\Http\Controllers\SendEmailController;
+use App\Http\Controllers\UserController;
+
 
 
 
@@ -29,6 +31,14 @@ Route::controller(LoginRegisterController::class)->group(function() {
     Route::get('/dashboard', 'dashboard')->name('dashboard');
     Route::get('/send-mail', [SendEmailController::class,'index'])->name('kirim-email');
     Route::post('/post-email', [SendEmailController::class, 'store'])->name('post-email');
+    Route::get('/users', [UserController::class, 'index'])->name('users');
+    Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
+    Route::get('/users/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
+    Route::patch('/users/{user}', [UserController::class, 'update'])->name('users.update');
+    Route::get('/users/{user}/resize', [UserController::class, 'resizeForm'])->name('users.resize');
+    Route::post('/users/{user}/resize', [UserController::class, 'resizeImage'])->name('resizeImage');
     Route::post('/logout', 'logout')->name('logout');
    });
+
+   
    
