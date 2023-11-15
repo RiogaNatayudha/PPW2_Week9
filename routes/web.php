@@ -4,6 +4,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginRegisterController;
 use App\Http\Controllers\SendEmailController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\GalleryController;
+
 
 
 
@@ -37,6 +39,7 @@ Route::controller(LoginRegisterController::class)->group(function() {
     Route::patch('/users/{user}', [UserController::class, 'update'])->name('users.update');
     Route::get('/users/{user}/resize', [UserController::class, 'resizeForm'])->name('users.resizeForm');
     Route::post('/users/{user}/resize', [UserController::class, 'resizeImage'])->name('resizeImage');
+    Route::resource('gallery', GalleryController::class);
     Route::post('/logout', 'logout')->name('logout');
    });
 

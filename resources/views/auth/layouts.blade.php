@@ -10,6 +10,7 @@
     <link href="https://fonts.googleapis.com/css?family=Poppins:100,100i,200,200i,300,300i,400,400i,500,500i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
 	<link href="https://fonts.googleapis.com/css?family=Rufina:400,700" rel="stylesheet">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="{{ asset('lightbox2/dist/css/lightbox.min.css')}}">
     <style>
         body {
         background-color: black; 
@@ -45,6 +46,9 @@
                     <li class="nav-item">
                         <a class="nav-link text-light {{ (request()->is('register')) ? 'active' : '' }}" href="{{ route('register') }}">Register</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-light {{ (request()->is('gallery')) ? 'active' : '' }}" href="{{route('gallery.index') }}">Gallery</a>
+                    </li>
                     @else
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" style="color:aliceblue;" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -70,6 +74,7 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
+    <script src="{{ asset('lightbox2/dist/js/lightbox-plus-jquery.min.js')}}"></script>
 </body>
 
 </html>
