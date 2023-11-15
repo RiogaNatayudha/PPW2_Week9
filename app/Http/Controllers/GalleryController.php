@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Post;
+use Illuminate\Support\Facades\Storage;
+
 
 
 
@@ -39,7 +41,7 @@ class GalleryController extends Controller
         $this->validate($request, [
             'title' => 'required|max:255',
             'description' => 'required',
-            'picture' => 'image|nullable|max:1999'
+            'picture' => 'image|nullable|max:1000000'
         ]);
         if ($request->hasFile('picture')) {
             $filenameWithExt = $request->file('picture')->getClientOriginalName();
@@ -78,22 +80,63 @@ class GalleryController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $gallery = Post::find($id);
+        return view('gallery.edit', compact('gallery'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, $id)
     {
-        //
-    }
+        $this->validate($request, [
+            'title' => 'required|max:255',
+            'description' => 'required',
+            'picture' => 'image|nullable|max:1999'
+        ]);
 
+        $gallery = Post::find($id);
+        $gallery->title = $request->input('title');
+        $gallery->description = $request->input('description');
+
+        // Hapus gambar lama dari storage jika ada
+        if ($gallery->picture && Storage::exists('posts_image/' . $gallery->picture)) {
+            Storage::delete('posts_image/' . $gallery->picture);
+        }
+
+        // Proses upload gambar baru
+        if ($request->hasFile('picture')) {
+            $filenameWithExt = $request->file('picture')->getClientOriginalName();
+            $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
+            $extension = $request->file('picture')->getClientOriginalExtension();
+            $basename = uniqid() . time();
+            $smallFilename = "small_{$basename}.{$extension}";
+            $mediumFilename = "medium_{$basename}.{$extension}";
+            $largeFilename = "large_{$basename}.{$extension}";
+            $filenameSimpan = "{$basename}.{$extension}";
+            $path = $request->file('picture')->storeAs('posts_image', $filenameSimpan);
+
+            $gallery->picture = $filenameSimpan;
+        }
+
+        $gallery->save();
+
+        return redirect('gallery')->with('success', 'Berhasil mengupdate data');
+    }
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy($id)
     {
-        //
+        $gallery = Post::find($id);
+
+        // Hapus gambar dari storage jika ada
+        if ($gallery->picture && Storage::exists('posts_image/' . $gallery->picture)) {
+            Storage::delete('posts_image/' . $gallery->picture);
+        }
+
+        $gallery->delete();
+
+        return redirect('gallery')->with('success', 'Berhasil menghapus data');
     }
 }
